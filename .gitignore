@@ -1,0 +1,24 @@
+# R
+.Rhistory
+.RData
+.Renviron
+.Rproj.user/
+# renv
+renv/library/
+
+# macOS
+.DS_Store
+
+# project data (dir or symlink)
+data
+data/
+
+# SAS-generated artifacts
+*.log
+*.lst
+*.sas7bdat
+*.sas7bcat
+*.sas7bvew
+*.xpt
+work/
+results/
