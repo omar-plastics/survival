@@ -14,6 +14,9 @@ library(MatchIt)
 library(survival)
 library(broom)
 library(cobalt)
+library(future.apply)
+library(progressr)
+library(splines)  # for ns()
 
 set.seed(2025)
 
@@ -129,25 +132,6 @@ imp <- futuremice(
 saveRDS(imp, "imp_m30_maxit20.rds")          # portable across OS/CPUs
 # (optional, smaller/faster) qs::qsave(imp, "imp_m30_maxit20.qs")
 
-library(future.apply)
-library(progressr)
-
-plan(multisession, workers = 10)            # how many cores you want
-handlers(global = TRUE); handlers("txtprogressbar")
-
-with_progress({
-  p <- progressor(steps = 30)               # total steps
-  imp_list <- future_lapply(1:30, function(i) {
-    # run one imputation
-    imp_i <- mice(mi_dat, m = 1, maxit = 20,
-                  method = meth, predictorMatrix = pred,
-                  printFlag = FALSE, seed = 2025 + i)
-    p(message = sprintf("imputation %d/30", i))  # <-- tick HERE
-    imp_i
-  }, future.seed = TRUE)
-})
-
-imp1 <- Reduce(mice::ibind, imp_list)        # combine 30 mids -> one mids
 
 # okay so first i must impute the missing values
 # Then in must do the propensity score match
@@ -161,7 +145,7 @@ options(future.wait.interval = 0.1)  # snappier progress polling
 # --- pre-complete imputations to avoid shipping 'imp' to every worker ---
 datlist <- lapply(seq_len(imp$m), function(i) mice::complete(imp, i))
 
-library(splines)  # for ns()
+
 
 do_one <- function(dd, caliper = 0.20) {
   # ensure types
