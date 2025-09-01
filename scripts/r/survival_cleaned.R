@@ -39,6 +39,17 @@ Sys.setenv(VECLIB_MAXIMUM_THREADS = "1")
 # Example: "~/Documents/final_pub.sas7bdat"
 
 dat <- read_sas("~/Developer/plastics/survival/data/raw/final_pub.sas7bdat")
+cat_file <- "~/Developer/plastics/survival/data/raw/formats.sas7bcat"
+
+if (file.exists(cat_file)) {
+  dat <- haven::read_sas(sas_file, catalog_file = cat_file)
+} else {
+  dat <- haven::read_sas(sas_file)
+}
+
+# See which columns are 'labelled'
+which_labelled <- vapply(dat, haven::is_labelled, logical(1))
+sort(names(dat)[which_labelled])
 
 # Outcome and key fields
 # event = 1 for death; time = months from surgery (os_surg)
