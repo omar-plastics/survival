@@ -38,7 +38,7 @@ Sys.setenv(VECLIB_MAXIMUM_THREADS = "1")
 # Point this to your actual file path
 # Example: "~/Documents/final_pub.sas7bdat"
 
-dat <- read_sas("~/Developer/plastics/survival/data/raw/final_pub.sas7bdat")
+sas_file <- "~/Developer/plastics/survival/data/raw/final_pub.sas7bdat"
 cat_file <- "~/Developer/plastics/survival/data/raw/formats.sas7bcat"
 
 if (file.exists(cat_file)) {
